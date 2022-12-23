@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -39,22 +40,20 @@ public class MovieServiceImpl implements MovieService {
         while (movies.containsKey(random)) {
             random = new Random().nextLong();
         }
+        movie.setId(random);
         movies.put(random, movie);
-        writeToFile();
         return movie;
     }
 
     @Override
     public void delete(Long id) {
         movies.remove(id);
-        writeToFile();
     }
 
     @Override
     public Movie update(Long id, Movie movie) {
         movies.put(id, movie);
-        writeToFile();
-        return null;
+        return movie;
     }
 
     @PostConstruct
@@ -66,7 +65,7 @@ public class MovieServiceImpl implements MovieService {
             throw new RuntimeException(e);
         }
     }
-
+    @PreDestroy
     private void writeToFile() {
         try {
             String s = objectMapper.writeValueAsString(movies);
