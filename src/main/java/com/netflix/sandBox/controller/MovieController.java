@@ -30,7 +30,7 @@ public class MovieController {
     @PostMapping()
     public ResponseEntity<Movie> save(@RequestBody Movie movie) {
         Movie savedMovie = movieService.save(movie);
-        return new ResponseEntity<>(movie, HttpStatus.CREATED);
+        return new ResponseEntity<>(savedMovie, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
