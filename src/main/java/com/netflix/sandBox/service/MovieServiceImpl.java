@@ -51,8 +51,8 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public Movie update(Long id, Movie movie) {
-        movies.put(id, movie);
+    public Movie update(Movie movie) {
+        movies.put(movie.getId(), movie);
         return movie;
     }
 
@@ -65,6 +65,7 @@ public class MovieServiceImpl implements MovieService {
             throw new RuntimeException(e);
         }
     }
+
     @PreDestroy
     private void writeToFile() {
         try {
