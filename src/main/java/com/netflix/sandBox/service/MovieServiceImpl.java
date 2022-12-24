@@ -1,6 +1,7 @@
 package com.netflix.sandBox.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.sandBox.exception.MovieNotFoundException;
 import com.netflix.sandBox.modal.Movie;
 import com.netflix.sandBox.service.api.MovieService;
 import lombok.RequiredArgsConstructor;
@@ -8,12 +9,10 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -31,7 +30,11 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Movie getById(Long id) {
-        return movies.get(id);
+        if (movies.containsKey(id)) {
+            return movies.get(id);
+        } else {
+            throw new MovieNotFoundException("Movie with id: " + id + " not found");
+        }
     }
 
     @Override
@@ -61,6 +64,9 @@ public class MovieServiceImpl implements MovieService {
         try {
             List<Movie> movieList = objectMapper.readerForListOf(Movie.class).readValue(Paths.get(PATH).toFile());
             movies = movieList.stream().collect(Collectors.toMap(Movie::getId, Function.identity()));
+        } catch (FileNotFoundException e) {
+            //logging
+            movies = new HashMap<>();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
