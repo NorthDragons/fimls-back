@@ -1,17 +1,12 @@
 package com.netflix.sandBox.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.List;
 
-@Getter
-@Setter
 public class ApiError {
-    private String message;
+    private final String message;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String debugMessage;
-
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<String> errors;
 
@@ -19,17 +14,14 @@ public class ApiError {
         this.message = message;
         this.debugMessage = debugMessage;
     }
+
     public ApiError(String message) {
-        this.message=message;
+        this.message = message;
     }
 
     public ApiError(String message, String debugMessage, List<String> errors) {
         this.message = message;
         this.debugMessage = debugMessage;
         this.errors = errors;
-    }
-
-    public ApiError() {
-
     }
 }
