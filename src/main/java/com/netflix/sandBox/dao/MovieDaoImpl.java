@@ -4,18 +4,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.sandBox.dao.api.MovieDao;
 import com.netflix.sandBox.exception.MovieNotFoundException;
 import com.netflix.sandBox.modal.Movie;
-import lombok.RequiredArgsConstructor;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Repository;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
@@ -30,8 +34,10 @@ public class MovieDaoImpl implements MovieDao {
     @PostConstruct
     private void readFromFile() {
         try {
-            List<Movie> movieList = objectMapper.readerForListOf(Movie.class).readValue(Paths.get(PATH).toFile());
-            movies = movieList.stream().collect(Collectors.toMap(Movie::getId, Function.identity()));
+            List<Movie> movieList =
+                    objectMapper.readerForListOf(Movie.class).readValue(Paths.get(PATH).toFile());
+            movies =
+                    movieList.stream().collect(Collectors.toMap(Movie::getId, Function.identity()));
         } catch (FileNotFoundException e) {
             log.error("File not found: ", e);
             movies = new HashMap<>();
@@ -51,13 +57,13 @@ public class MovieDaoImpl implements MovieDao {
     }
 
     @Override
-    public List<Movie> getAll() {
-        return new ArrayList<>(movies.values());
+    public Collection<Movie> getAll() {
+        return movies.values();
     }
 
     @Override
     public Optional<Movie> getById(Long id) {
-            return Optional.of(movies.get(id));
+        return Optional.of(movies.get(id));
     }
 
     @Override
@@ -73,9 +79,9 @@ public class MovieDaoImpl implements MovieDao {
 
     @Override
     public void delete(Long id) {
-        if(movies.containsKey(id)){
+        if (movies.containsKey(id)) {
             movies.remove(id);
-        }else {
+        } else {
             throw new MovieNotFoundException("Movie with id: " + id + " not found");
         }
     }

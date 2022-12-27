@@ -4,15 +4,14 @@ import com.netflix.sandBox.dao.MovieDaoImpl;
 import com.netflix.sandBox.exception.MovieNotFoundException;
 import com.netflix.sandBox.modal.Movie;
 import com.netflix.sandBox.service.api.MovieService;
-import lombok.RequiredArgsConstructor;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
@@ -21,17 +20,18 @@ public class MovieServiceImpl implements MovieService {
     private final MovieDaoImpl movieDao;
 
     @Override
-    public List<Movie> getAll(List<String> genres) {
-        List<Movie> movies = movieDao.getAll();
+    public Collection<Movie> getAll(List<String> genres) {
+        Collection<Movie> movies = movieDao.getAll();
         if (genres != null && !genres.isEmpty()) {
-            return sortMovies(movies, genres);
+            return filterMovies(movies, genres);
         }
         return movies;
     }
 
     @Override
     public Movie getById(Long id) {
-        Movie movie = movieDao.getById(id).orElseThrow(() -> new MovieNotFoundException("Movie with id: " + id + " not found"));
+        Movie movie = movieDao.getById(id).orElseThrow(
+                () -> new MovieNotFoundException("Movie with id: " + id + " not found"));
         return movie;
     }
 
@@ -55,13 +55,13 @@ public class MovieServiceImpl implements MovieService {
         return movie;
     }
 
-    private List<Movie> sortMovies(List<Movie> movies, List<String> genres) {
+    private Set<Movie> filterMovies(Collection<Movie> movies, List<String> genres) {
         Set<Movie> movieSet = new HashSet<>();
         for (String genre : genres) {
             Set<Movie> collect = movies.stream().filter(
                     movie -> movie.getGenres().contains(genre)).collect(Collectors.toSet());
             movieSet.addAll(collect);
         }
-        return new ArrayList<>(movieSet);
+        return movieSet;
     }
 }

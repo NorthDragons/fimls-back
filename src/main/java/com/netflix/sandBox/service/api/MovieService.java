@@ -1,11 +1,11 @@
 package com.netflix.sandBox.service.api;
 
 import com.netflix.sandBox.modal.Movie;
-
+import java.util.Collection;
 import java.util.List;
 
 public interface MovieService {
-    List<Movie> getAll(List<String>genres);
+    Collection<Movie> getAll(List<String> genres);
 
     Movie getById(Long id);
 
