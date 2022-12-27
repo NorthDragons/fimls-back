@@ -1,5 +1,6 @@
 package com.netflix.sandBox.exception;
 
+import org.apache.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +18,12 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @ControllerAdvice
 public class MovieExceptionHandler extends ResponseEntityExceptionHandler {
+    private final Logger log = Logger.getLogger(MovieExceptionHandler.class);
     private ApiError apiError;
 
     @ExceptionHandler(MovieNotFoundException.class)
-    protected ResponseEntity<Object> employeeNotFoundException(MovieNotFoundException ex,
-                                                               WebRequest request) {
+    protected ResponseEntity<Object> movieNotFoundException(MovieNotFoundException ex,
+                                                            WebRequest request) {
         apiError = new ApiError("Movie not found exception", ex.getMessage());
         return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
     }
@@ -41,7 +43,9 @@ public class MovieExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
-        ApiError apiError = new ApiError("Internal Exception", ex.getMessage());
+        log.error("Internal error: ", ex);
+        ApiError apiError = new ApiError("Sorry, an unknown server error has occurred, contact your system administrator" +
+                "for more details");
         return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -57,8 +61,10 @@ public class MovieExceptionHandler extends ResponseEntityExceptionHandler {
             NoHandlerFoundException ex,
             HttpHeaders headers, HttpStatus status,
             WebRequest request) {
-        return new ResponseEntity<Object>(new ApiError("No Handler Found", ex.getMessage()),
-                status);
+        log.error("NoHandlerFoundException: ", ex);
+        return new ResponseEntity<Object>(
+                new ApiError("Sorry, an unknown server error has occurred, contact your system administrator " +
+                        "for more details"), status);
     }
 
 

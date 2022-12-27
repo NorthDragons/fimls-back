@@ -16,8 +16,8 @@ public class MovieController {
     private final MovieService movieService;
 
     @GetMapping()
-    public ResponseEntity<List<Movie>> getAll() {
-        List<Movie> movies = movieService.getAll();
+    public ResponseEntity<List<Movie>> getAll(@RequestBody(required = false) List<String> genres) {
+        List<Movie> movies = movieService.getAll(genres);
         return new ResponseEntity<>(movies, HttpStatus.OK);
     }
 

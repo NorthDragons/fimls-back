@@ -19,6 +19,9 @@ public class ApiError {
         this.message = message;
         this.debugMessage = debugMessage;
     }
+    public ApiError(String message) {
+        this.message=message;
+    }
 
     public ApiError(String message, String debugMessage, List<String> errors) {
         this.message = message;
