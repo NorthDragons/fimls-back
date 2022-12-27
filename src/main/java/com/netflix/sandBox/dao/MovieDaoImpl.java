@@ -81,13 +81,11 @@ public class MovieDaoImpl implements MovieDao {
 
     @Override
     public void delete(Long id) {
-        synchronized (MOVIE_MUTEX) {
             if (movies.containsKey(id)) {
                 movies.remove(id);
             } else {
                 throw new MovieNotFoundException("Movie with id: " + id + " not found");
             }
-        }
     }
 
     @Override
