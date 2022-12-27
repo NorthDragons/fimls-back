@@ -24,8 +24,8 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 @Repository
 public class MovieDaoImpl implements MovieDao {
+    private final Object MOVIE_MUTEX = new Object();
     private final Logger log = Logger.getLogger(MovieDaoImpl.class);
-
     private final ObjectMapper objectMapper;
     private final String PATH = "films.json";
     private Map<Long, Movie> movies;
@@ -68,26 +68,32 @@ public class MovieDaoImpl implements MovieDao {
 
     @Override
     public Movie save(Movie movie) {
-        long randomId = 1L;
-        while (movies.containsKey(randomId)) {
-            randomId = new Random().nextLong();
+        synchronized (MOVIE_MUTEX) {
+            long randomId = 1L;
+            while (movies.containsKey(randomId)) {
+                randomId = new Random().nextLong();
+            }
+            movie.setId(randomId);
+            movies.put(randomId, movie);
+            return movie;
         }
-        movie.setId(randomId);
-        movies.put(randomId, movie);
-        return movie;
     }
 
     @Override
     public void delete(Long id) {
-        if (movies.containsKey(id)) {
-            movies.remove(id);
-        } else {
-            throw new MovieNotFoundException("Movie with id: " + id + " not found");
+        synchronized (MOVIE_MUTEX) {
+            if (movies.containsKey(id)) {
+                movies.remove(id);
+            } else {
+                throw new MovieNotFoundException("Movie with id: " + id + " not found");
+            }
         }
     }
 
     @Override
     public void update(Movie movie) {
-        movies.put(movie.getId(), movie);
+        synchronized (MOVIE_MUTEX) {
+            movies.put(movie.getId(), movie);
+        }
     }
 }

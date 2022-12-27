@@ -30,9 +30,8 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Movie getById(Long id) {
-        Movie movie = movieDao.getById(id).orElseThrow(
+        return movieDao.getById(id).orElseThrow(
                 () -> new MovieNotFoundException("Movie with id: " + id + " not found"));
-        return movie;
     }
 
     @Override
