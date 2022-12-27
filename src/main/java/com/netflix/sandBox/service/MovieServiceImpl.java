@@ -1,84 +1,67 @@
 package com.netflix.sandBox.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.netflix.sandBox.dao.MovieDaoImpl;
 import com.netflix.sandBox.exception.MovieNotFoundException;
 import com.netflix.sandBox.modal.Movie;
 import com.netflix.sandBox.service.api.MovieService;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.function.Function;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class MovieServiceImpl implements MovieService {
-    private final ObjectMapper objectMapper;
-    private Map<Long, Movie> movies;
-    private final String PATH = "films.json";
+    private final Logger log = Logger.getLogger(MovieServiceImpl.class);
+    private final MovieDaoImpl movieDao;
 
     @Override
-    public List<Movie> getAll() {
-        return new ArrayList<>(movies.values());
+    public List<Movie> getAll(List<String> genres) {
+        List<Movie> movies = movieDao.getAll();
+        if (genres != null && !genres.isEmpty()) {
+            return sortMovies(movies, genres);
+        }
+        return movies;
     }
 
     @Override
     public Movie getById(Long id) {
-        if (movies.containsKey(id)) {
-            return movies.get(id);
-        } else {
-            throw new MovieNotFoundException("Movie with id: " + id + " not found");
-        }
+        Movie movie = movieDao.getById(id).orElseThrow(() -> new MovieNotFoundException("Movie with id: " + id + " not found"));
+        return movie;
     }
 
     @Override
     public Movie save(Movie movie) {
-        long random = 1L;
-        while (movies.containsKey(random)) {
-            random = new Random().nextLong();
-        }
-        movie.setId(random);
-        movies.put(random, movie);
-        return movie;
+        Movie savedMovie = movieDao.save(movie);
+        log.info("Movie with id: " + savedMovie.getId() + " was created");
+        return savedMovie;
     }
 
     @Override
     public void delete(Long id) {
-        movies.remove(id);
+        movieDao.delete(id);
+        log.info("Movie with id: " + id + " was deleted");
     }
 
     @Override
     public Movie update(Movie movie) {
-        movies.put(movie.getId(), movie);
+        movieDao.update(movie);
+        log.info("Movie with id: " + movie.getId() + " was updated");
         return movie;
     }
 
-    @PostConstruct
-    private void readFromFile() {
-        try {
-            List<Movie> movieList = objectMapper.readerForListOf(Movie.class).readValue(Paths.get(PATH).toFile());
-            movies = movieList.stream().collect(Collectors.toMap(Movie::getId, Function.identity()));
-        } catch (FileNotFoundException e) {
-            //logging
-            movies = new HashMap<>();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    private List<Movie> sortMovies(List<Movie> movies, List<String> genres) {
+        Set<Movie> movieSet = new HashSet<>();
+        for (String genre : genres) {
+            Set<Movie> collect = movies.stream().filter(
+                    movie -> movie.getGenres().contains(genre)).collect(Collectors.toSet());
+            movieSet.addAll(collect);
         }
-    }
-
-    @PreDestroy
-    private void writeToFile() {
-        try {
-            String s = objectMapper.writeValueAsString(movies);
-            objectMapper.writeValue(Paths.get(PATH).toFile(), movies.values());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return new ArrayList<>(movieSet);
     }
 }

@@ -5,7 +5,7 @@ import com.netflix.sandBox.modal.Movie;
 import java.util.List;
 
 public interface MovieService {
-    List<Movie> getAll();
+    List<Movie> getAll(List<String>genres);
 
     Movie getById(Long id);
 
