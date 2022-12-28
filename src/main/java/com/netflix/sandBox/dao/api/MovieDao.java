@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface MovieDao {
     Collection<Movie> getAll();
 
-    Optional<Movie> getById(Long id);
+    Movie getById(Long id);
 
     Movie save(Movie movie);
 

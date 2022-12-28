@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
@@ -31,12 +33,22 @@ public class MovieDaoImplTest {
 
     @Test
     @Order(2)
+    public void checkPreDestroySuccess() {
+        Movie movie1 = movieDao.getById(movie.getId());
+        assertAll(
+                () -> assertNotNull(movie1),
+                () -> assertEquals(movie, movie1)
+        );
+    }
+
+    @Test
+    @Order(3)
     public void deleteAssertSuccessWithNoExceptions() {
         assertDoesNotThrow(() -> movieDao.delete(movie.getId()));
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     public void deleteWithWrongIdAssertException() {
         assertThrows(MovieNotFoundException.class, () -> movieDao.delete(null));
     }

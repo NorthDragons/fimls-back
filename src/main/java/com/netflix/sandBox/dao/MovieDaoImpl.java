@@ -63,9 +63,13 @@ public class MovieDaoImpl implements MovieDao {
     }
 
     @Override
-    public Optional<Movie> getById(Long id) {
+    public Movie getById(Long id) {
         synchronized (MOVIE_MUTEX) {
-            return Optional.of(movies.get(id));
+            if (movies.containsKey(id)) {
+                return movies.get(id);
+            }
+            throw new MovieNotFoundException("Movie with id: " + id + " not found");
+
         }
     }
 
@@ -87,9 +91,9 @@ public class MovieDaoImpl implements MovieDao {
         synchronized (MOVIE_MUTEX) {
             if (movies.containsKey(id)) {
                 movies.remove(id);
-            } else {
-                throw new MovieNotFoundException("Movie with id: " + id + " not found");
+                return;
             }
+            throw new MovieNotFoundException("Movie with id: " + id + " not found");
         }
     }
 
