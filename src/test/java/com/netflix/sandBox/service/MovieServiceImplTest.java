@@ -24,40 +24,40 @@ public class MovieServiceImplTest {
     @InjectMocks
     private MovieServiceImpl movieService;
 
-    private final List<Movie> moviesMock = new ArrayList<>();
+    private final List<Movie> moviesForTest = new ArrayList<>();
 
     public MovieServiceImplTest() {
-        moviesMock.add(Movie.builder().id(1L).genres(List.of("Genre to test 1")).title("test1").build());
-        moviesMock.add(Movie.builder().id(2L).genres(List.of("Detective")).title("test2").build());
-        moviesMock.add(Movie.builder().id(3L).genres(List.of("Criminal")).title("test3").build());
+        moviesForTest.add(Movie.builder().id(1L).genres(List.of("Genre to test 1")).title("test1").build());
+        moviesForTest.add(Movie.builder().id(2L).genres(List.of("Detective")).title("test2").build());
+        moviesForTest.add(Movie.builder().id(3L).genres(List.of("Criminal")).title("test3").build());
     }
 
     @Test
     public void getAllAssertAllMovies() {
-        Mockito.when(movieDao.getAll()).thenReturn(moviesMock);
+        Mockito.when(movieDao.getAll()).thenReturn(moviesForTest);
         Collection<Movie> all = movieService.getAll(null);
         assertNotNull(all);
-        assertEquals(moviesMock.size(), all.size());
+        assertEquals(moviesForTest.size(), all.size());
     }
 
     @Test
-    public void getAllWithSortingAssertSortedListWithOneElem() {
-        Mockito.when(movieDao.getAll()).thenReturn(moviesMock);
+    public void getAllWithFilteringAssertFilteredListWithOneElem() {
+        Mockito.when(movieDao.getAll()).thenReturn(moviesForTest);
         List<String> genres = new ArrayList<>();
         genres.add("Detective");
         List<Movie> all = new ArrayList<>(movieService.getAll(genres));
         assertNotNull(all);
-        assertEquals(moviesMock.get(1), all.get(0));
+        assertEquals(moviesForTest.get(1), all.get(0));
         assertEquals(1, all.size());
     }
 
     @Test
     public void getByIdAssertNotNullAndReturnedCorrectMovie() {
-        Long id = moviesMock.get(0).getId();
-        Mockito.when(movieDao.getById(id)).thenReturn(Optional.of(moviesMock.get(0)));
+        Long id = moviesForTest.get(0).getId();
+        Mockito.when(movieDao.getById(id)).thenReturn(moviesForTest.get(0));
         Movie byId = movieService.getById(id);
         assertNotNull(byId);
         assertEquals(id, byId.getId());
-        assertEquals(moviesMock.get(0), byId);
+        assertEquals(moviesForTest.get(0), byId);
     }
 }

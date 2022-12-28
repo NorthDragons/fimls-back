@@ -4,11 +4,13 @@ import com.netflix.sandBox.dao.MovieDaoImpl;
 import com.netflix.sandBox.exception.MovieNotFoundException;
 import com.netflix.sandBox.modal.Movie;
 import com.netflix.sandBox.service.api.MovieService;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -30,8 +32,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Movie getById(Long id) {
-        return movieDao.getById(id).orElseThrow(
-                () -> new MovieNotFoundException("Movie with id: " + id + " not found"));
+        return movieDao.getById(id);
     }
 
     @Override
