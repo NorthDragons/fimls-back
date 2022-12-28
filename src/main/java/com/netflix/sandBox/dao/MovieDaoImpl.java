@@ -58,12 +58,17 @@ public class MovieDaoImpl implements MovieDao {
 
     @Override
     public Collection<Movie> getAll() {
-        return movies.values();
+        synchronized (MOVIE_MUTEX) {
+            return movies.values();
+        }
+
     }
 
     @Override
     public Optional<Movie> getById(Long id) {
-        return Optional.of(movies.get(id));
+        synchronized (MOVIE_MUTEX) {
+            return Optional.of(movies.get(id));
+        }
     }
 
     @Override
