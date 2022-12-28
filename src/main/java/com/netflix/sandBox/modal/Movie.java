@@ -3,11 +3,14 @@ package com.netflix.sandBox.modal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 public class Movie {
     private Long id;
     private String title;
