@@ -4,22 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.sandBox.dao.api.MovieDao;
 import com.netflix.sandBox.exception.MovieNotFoundException;
 import com.netflix.sandBox.modal.Movie;
+import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Repository;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import lombok.RequiredArgsConstructor;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
@@ -27,7 +24,8 @@ public class MovieDaoImpl implements MovieDao {
     private final Object MOVIE_MUTEX = new Object();
     private final Logger log = Logger.getLogger(MovieDaoImpl.class);
     private final ObjectMapper objectMapper;
-    private final String PATH = "films.json";
+    @Value("${movie.path}")
+    private String PATH;
     private Map<Long, Movie> movies;
 
 
