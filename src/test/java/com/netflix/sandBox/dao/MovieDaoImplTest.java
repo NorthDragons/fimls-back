@@ -3,12 +3,13 @@ package com.netflix.sandBox.dao;
 import com.netflix.sandBox.dao.api.MovieDao;
 import com.netflix.sandBox.exception.MovieNotFoundException;
 import com.netflix.sandBox.modal.Movie;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
