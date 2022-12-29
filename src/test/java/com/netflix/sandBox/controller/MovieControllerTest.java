@@ -39,11 +39,14 @@ public class MovieControllerTest {
 
     @Test
     public void getByIdAssertBodyNotNullAndResponseStatusOk() {
-        when(movieService.getById(anyLong())).thenReturn(Movie.builder().build());
-        ResponseEntity<Movie> responseEntity = movieController.getById(1L);
+        Long id = 1L;
+        Movie movie = Movie.builder().id(id).build();
+        when(movieService.getById(anyLong())).thenReturn(movie);
+        ResponseEntity<Movie> responseEntity = movieController.getById(id);
         Movie body = responseEntity.getBody();
         assertAll(
                 () -> assertNotNull(body),
+                () -> assertEquals(movie, body),
                 () -> assertEquals(HttpStatus.OK, responseEntity.getStatusCode())
         );
     }
