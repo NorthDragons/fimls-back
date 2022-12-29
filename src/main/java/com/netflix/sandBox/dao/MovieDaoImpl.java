@@ -7,6 +7,7 @@ import com.netflix.sandBox.modal.Movie;
 import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -18,8 +19,10 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+
+
 @RequiredArgsConstructor
-@Repository
+@Repository()
 public class MovieDaoImpl implements MovieDao {
     private final Object MOVIE_MUTEX = new Object();
     private final Logger log = Logger.getLogger(MovieDaoImpl.class);
@@ -59,7 +62,6 @@ public class MovieDaoImpl implements MovieDao {
         synchronized (MOVIE_MUTEX) {
             return movies.values();
         }
-
     }
 
     @Override
@@ -69,7 +71,6 @@ public class MovieDaoImpl implements MovieDao {
                 return movies.get(id);
             }
             throw new MovieNotFoundException("Movie with id: " + id + " not found");
-
         }
     }
 
@@ -102,5 +103,9 @@ public class MovieDaoImpl implements MovieDao {
         synchronized (MOVIE_MUTEX) {
             movies.put(movie.getId(), movie);
         }
+    }
+
+    public void setPath(String PATH) {
+        this.PATH = PATH;
     }
 }
