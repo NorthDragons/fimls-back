@@ -35,13 +35,10 @@ public class MovieDaoImplTest {
     @Test
     @Order(1)
     @DirtiesContext
-    public void saveAssertSavedFilmIdNotNullAndCorrectTitle() {
+    public void saveAssertSuccessfulSaving() {
         sizeBefore = movieDao.getAll().size();
         movie = movieDao.save(movie);
-        assertAll(
-                () -> assertNotNull(movie.getId()),
-                () -> assertEquals(movie.getTitle(), movie.getTitle())
-        );
+        assertNotEquals(sizeBefore, movieDao.getAll().size());
     }
 
     @Test
